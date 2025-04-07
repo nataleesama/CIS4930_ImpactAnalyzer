@@ -63,7 +63,7 @@ class Visualizer:
         plt.tight_layout()
         plt.show()
 
-
+#delete later
 test_data = {'years': list(range(1990, 2023)), 'temperatures': [14 + 0.1*(i-1990) for i in range(1990, 2023)],
 'predictions': [14 + 0.11*(i-1990) for i in range(1990, 2023)]}
 Visualizer.plot_temperature_trend(**test_data)
