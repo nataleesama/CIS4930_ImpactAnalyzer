@@ -4,13 +4,13 @@ import numpy as np
 from typing import List, Tuple
 class Visualizer:
     @staticmethod
-    def plot_temperature_trend(years: List[int], temperatures: List[float], predictions: List[float]) -> None:
+    def plot_precipitation_trend(years: List[int], precipitations: List[float], predictions: List[float]) -> None:
         plt.figure(figsize=(10, 6))
-        plt.plot(years, temperatures, label='Actual')
+        plt.plot(years, precipitations, label='Actual')
         plt.plot(years, predictions, label='Predicted')
         plt.xlabel('Year')
-        plt.ylabel('Temperature (normalized)')
-        plt.title('Temperature Trend Over Time')
+        plt.ylabel('precipitation (normalized)')
+        plt.title('precipitation Trend Over Time')
         plt.legend()
         plt.show()
     @staticmethod
@@ -20,6 +20,7 @@ class Visualizer:
         data_array = np.array(data)
         x = data_array[:, 0]
         y = data_array[:, 1]
+        y = np.clip(data_array[:, 1], None, 100)  #sets a max for the y values, can do the same for x
         
         # Create scatter plot with different colors for each cluster
         unique_labels = set(labels)
@@ -64,9 +65,10 @@ class Visualizer:
         plt.show()
 
 #delete later
-test_data = {'years': list(range(1990, 2023)), 'temperatures': [14 + 0.1*(i-1990) for i in range(1990, 2023)],
+"""
+test_data = {'years': list(range(1990, 2023)), 'precipitations': [14 + 0.1*(i-1990) for i in range(1990, 2023)],
 'predictions': [14 + 0.11*(i-1990) for i in range(1990, 2023)]}
-Visualizer.plot_temperature_trend(**test_data)
+Visualizer.plot_precipitation_trend(**test_data)
 
 minimal_data = [(1,1), (1,2), (5,1), (5,2)]
 minimal_labels = [0, 0, 1, 1]
@@ -75,3 +77,4 @@ Visualizer.plot_clustered_data(minimal_data, minimal_labels)
 normal_data = [10, 11, 12, 11, 10, 9, 10, 11, 10, 9, 8, 10, 30, 10, 9, 8, 7, 8, 9, 10]
 anomalies = [False]*12 + [True] + [False]*7
 Visualizer.plot_anomalies(normal_data, anomalies)
+"""

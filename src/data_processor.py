@@ -49,6 +49,6 @@ class DataProcessor:
 
 
 if __name__ == "__main__":
-    processor = DataProcessor("climate_data.json")
+    processor = DataProcessor("../data/climate_data.json")
     print(processor.clean_data())
     print(processor.get_features_and_target())

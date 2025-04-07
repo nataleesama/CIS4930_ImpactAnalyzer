@@ -3,7 +3,7 @@ import json
 
 endpoint = "https://www.ncei.noaa.gov/cdo-web/api/v2/data"
 token = "kKyfMZMYhpcxvQUbmfhmpBBfYvvHXaOO"
-output = "climate_data.json"
+output = "../data/climate_data.json"
 
 def PullData(startdate, enddate):
     parameters = {
@@ -12,7 +12,7 @@ def PullData(startdate, enddate):
         "stationid" : "GHCND:USW00093805",     #Tallahassee Station
         "startdate" : startdate,               
         "enddate" : enddate,
-        "limit" : 20,
+        "limit" : 31,
         "units" : "metric"
     }
 
