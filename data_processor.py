@@ -15,7 +15,7 @@ class DataProcessor:
 
 
     def clean_data(self) -> pd.DataFrame:
-        """Remove rows with missing values and normalize temperature
+        """Remove rows with missing values and normalize precipitation
         data."""
         # Remove Rows with Missing Values 
         # Specifically in the precipitation column
@@ -28,23 +28,26 @@ class DataProcessor:
 
         # Find normalized value for each data row
         # Creates new column: 'normalized'
-        self.data['normalized'] = self.data['value'].map(lambda x: (x - min_precip) / (max_precip - min_precip))
+        self.data['normalized'] = self.data['value'].map(lambda x: (x - min_precip) / (max_precip - min_precip)) 
 
         return self.data
 
 
-    def get_features_and_target(self) -> tuple[np.ndarray,
-    np.ndarray]:
+    def get_features_and_target(self) -> tuple[np.ndarray,np.ndarray]:
         """Split data into features (year, month) and target
-        (temperature)."""
+        (precipitation)."""
         # Features
-        self.data['date'] = datetime.strptime(self.data['date'])
+        self.data['date'] = pd.to_datetime(self.data['date'])
         self.data['year'] = self.data['date'].dt.year
         self.data['month'] = self.data['date'].dt.month
 
-        # Target = self.data['value']
+        yearMonth = self.data[['year', 'month']].to_numpy()
+        precipitation = self.data['value'].astype(int).to_numpy()
+
+        return yearMonth, precipitation
 
 
 if __name__ == "__main__":
     processor = DataProcessor("climate_data.json")
     print(processor.clean_data())
+    print(processor.get_features_and_target())
