@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 from IPython.display import HTML
-
+#Working on: Implement a custom visualization technique for displaying multidimensional climate data, Create an animated visualization showing climate change over time
 class Visualizer:
     @staticmethod
     def plot_precipitation_trend(years: List[int], precipitations: List[float], predictions: List[float]) -> None:
