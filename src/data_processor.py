@@ -37,18 +37,19 @@ class DataProcessor:
         """Split data into features (year, month) and target
         (precipitation)."""
         # Features
-        self.data['date'] = pd.to_datetime(self.data['date'])
-        self.data['year'] = self.data['date'].dt.year
-        self.data['month'] = self.data['date'].dt.month
-        self.data['day'] = self.data['date'].dt.day
+        self.data['date'] = pd.to_datetime(self.data['date']) #from string to date time object
+        #then convert to some fraction of a year in progress to another
 
-        yearMonthDay = self.data[['year', 'month', 'day']].to_numpy() #though the month could be considered irrelevant becuase they are all within AUG
         precipitation = self.data['value'].astype(int).to_numpy()
 
-        return yearMonthDay, precipitation
+        self.data['date_float'] = self.data['date'].apply(partitionDays) #this converts evenly among the 31 days to a float represented as a 'progression' in that year's august
 
+        return self.data['date_float'], precipitation
 
+def partitionDays(dt):
+    return dt.year + (dt.day - 1) / 31
+    
 if __name__ == "__main__":
     processor = DataProcessor("../data/climate_data.json")
-    print(processor.clean_data())
+    #print(processor.clean_data())
     print(processor.get_features_and_target())

@@ -27,7 +27,7 @@ def main():
 
     # Cluster Graph
     elif args.action == "cluster":
-        data = list(zip([row[0] for row in x], y))
+        data = list(zip(x, y))
         labels = custom_clustering(np.array(data), n_clusters=2)
         Visualizer.plot_clustered_data(data, labels.tolist())
 

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from typing import List, Tuple
+
 class Visualizer:
     @staticmethod
     def plot_precipitation_trend(years: List[int], precipitations: List[float], predictions: List[float]) -> None:
@@ -13,28 +14,23 @@ class Visualizer:
         plt.title('precipitation Trend Over Time')
         plt.legend()
         plt.show()
+    
     @staticmethod
     def plot_clustered_data(data: List[Tuple[float, float]], labels: List[int]) -> None:
-        plt.figure(figsize=(10, 6)) 
-        # Convert data to numpy array for easier handling
-        data_array = np.array(data)
-        x = data_array[:, 0]
-        y = data_array[:, 1]
-        y = np.clip(data_array[:, 1], None, 100)  #sets a max for the y values, can do the same for x
+        plt.figure(figsize=(10, 6)) #presetting the size for legibility
         
-        # Create scatter plot with different colors for each cluster
-        unique_labels = set(labels)
-        colors = plt.cm.Spectral(np.linspace(0, 1, len(unique_labels)))
-        
-        for label, color in zip(unique_labels, colors):
-            mask = np.array(labels) == label
-            plt.scatter(x[mask], y[mask], c=[color], 
-                        label=f'Cluster {label}', alpha=0.7, edgecolors='w')
-        
-        plt.xlabel('Feature 1')
-        plt.ylabel('Feature 2')
-        plt.title('Clustered Data Visualization')
-        plt.legend()
+        dataArray = np.array(data)
+        x = dataArray[:, 0]
+        y = dataArray[:, 1]
+
+        bounds = [2020,2025,0,100] #axis aka years, these would be the static markers for the xaxis
+        plt.scatter(x, y)
+
+        xTickYears = range(2020,2025)
+        xTickLabels = [f"08/{year}" for year in xTickYears]
+
+        plt.xticks(xTickYears,xTickLabels) #ticks need to be represented as integers, and aug 1 ~2020.58. fix later
+        #plt.axis(bounds) #so this sets the max for both x and y
         plt.grid(True)
         plt.show()
 
