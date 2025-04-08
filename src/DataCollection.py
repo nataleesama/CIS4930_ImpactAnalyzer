@@ -41,7 +41,10 @@ def CombineData():
 
     for startdate, enddate in Dates:
         PulledData = PullData(startdate, enddate)
-        Data.extend(PulledData)
+        if PulledData:
+            Data.extend(PulledData)
+        else:
+            print("Data Retrieval Failed")
 
     with open(output, "w") as file:
         json.dump(Data, file)
