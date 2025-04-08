@@ -60,17 +60,3 @@ class Visualizer:
         plt.tight_layout()
         plt.show()
 
-#delete later
-"""
-test_data = {'years': list(range(1990, 2023)), 'precipitations': [14 + 0.1*(i-1990) for i in range(1990, 2023)],
-'predictions': [14 + 0.11*(i-1990) for i in range(1990, 2023)]}
-Visualizer.plot_precipitation_trend(**test_data)
-
-minimal_data = [(1,1), (1,2), (5,1), (5,2)]
-minimal_labels = [0, 0, 1, 1]
-Visualizer.plot_clustered_data(minimal_data, minimal_labels)
-
-normal_data = [10, 11, 12, 11, 10, 9, 10, 11, 10, 9, 8, 10, 30, 10, 9, 8, 7, 8, 9, 10]
-anomalies = [False]*12 + [True] + [False]*7
-Visualizer.plot_anomalies(normal_data, anomalies)
-"""
