@@ -9,31 +9,122 @@ from IPython.display import HTML
 #Working on: Implement a custom visualization technique for displaying multidimensional climate data, Create an animated visualization showing climate change over time
 class Visualizer:
     @staticmethod
-    def plot_precipitation_trend(years: List[int], precipitations: List[float], predictions: List[float]) -> None:
-        #print("Display Precipitation Trend Graph Interactive/Static: ")
-        #print("Static: 0")
-        #print("Interactive: 1")
-        interactive = True
-        if interactive:
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=years, y=precipitations, name='Actual', line=dict(color='blue')))
-            fig.add_trace(go.Scatter(x=years, y=predictions, name='Predicted', line=dict(color='red', dash='dash')))
-            fig.update_layout(
-                title='Precipitation Trend Over Time (Interactive)',
-                xaxis_title='Year',
-                yaxis_title='Precipitation (normalized)',
-                hovermode='x unified'
+    def plot_precipitation_trend(years: List[int], precipitations: List[float], predictions: List[float]):
+        fig = make_subplots(specs=[[{"secondary_y": False}]])
+        
+        fig.add_trace(go.Scatter(x=[],y=[], name='Actual', line=dict(color='blue', width=3), mode='lines'))
+    
+        fig.add_trace(go.Scatter(x=[],y=[],name='Predicted',line=dict(color='red', width=3, dash='dash'),mode='lines'))
+        
+        frames = [go.Frame(data=[go.Scatter(x=years[:k+1], y=precipitations[:k+1]),go.Scatter(x=years[:k+1], y=predictions[:k+1])],name=str(year))for k, year in enumerate(years)]
+        
+        fig.frames = frames
+        tick_vals = sorted(list(set([int(year) for year in years])))
+        tick_labelAug = [f"8/{str(year)[-2:]}" for year in range(min(years),max(years))]
+        fig.update_layout(
+            title=f"Precipitation Trend vs Predicted Trend ({min(years)}-{max(years)})",
+            xaxis=dict(
+                title='Year',
+                range=[min(years), max(years)],
+                showgrid=True,
+                tickmode='array',  # Use custom tick values
+                tickvals=tick_vals,  # Only show whole years
+                tickformat='d',
+                ticktext = tick_labelAug
+            ),
+            yaxis=dict(
+                title='Precipitation (normalized)',
+                range=[min(precipitations+predictions)-0.1, max(precipitations+predictions)+0.1],
+                showgrid=True
+            ),
+            hovermode='x unified',
+            updatemenus=[{
+                "type": "buttons",
+                "buttons": [
+                    {
+                        "label": "Play",
+                        "method": "animate",
+                        "args": [
+                            None, 
+                            {
+                            "frame": {"duration": 500, "redraw": True},
+                            "fromcurrent": True,
+                            "transition": {"duration": 300}
+                            }
+                    ]
+                },
+                {
+                    "label": "Pause",
+                    "method": "animate",
+                    "args": [
+                        [None], 
+                        {
+                            "mode": "immediate",
+                            "transition": {"duration": 0}
+                        }
+                    ]
+                }
+            ],
+            "x": 0.1,
+            "y": 0,
+            "xanchor": "right",
+            "yanchor": "top"
+        }],
+        sliders=[{
+            "steps": [
+                {
+                    "args": [
+                        [frame.name],
+                        {"frame": {"duration": 0, "redraw": True},
+                         "mode": "immediate"}
+                    ],
+                    "label": frame.name,
+                    "method": "animate"
+                }
+                for frame in frames
+            ],
+            "x": 0.1,
+            "len": 0.9,
+            "currentvalue": {
+                "prefix": "Year: ",
+                "visible": True,
+                "xanchor": "right"
+            }
+        }]
+    )
+    
+    
+        fig.update_layout(
+            annotations=[
+                dict(
+                    x=0.95,
+                    y=0.1,
+                    xref="paper",
+                    yref="paper",
+                    text=f"Year: {years[0]}",
+                    font=dict(size=20),
+                    showarrow=False,
+                    xanchor="right"
             )
-            fig.show()
-        else:
-            plt.figure(figsize=(10, 6))
-            plt.plot(years, precipitations, label='Actual')
-            plt.plot(years, predictions, label='Predicted')
-            plt.xlabel('Year')
-            plt.ylabel('Precipitation (normalized)')
-            plt.title('Precipitation Trend Over Time')
-            plt.legend()
-            plt.show()
+        ]
+        )
+    
+    
+        for i, frame in enumerate(fig.frames):
+            frame.layout.annotations = [
+                dict(
+                x=0.95,
+                y=0.1,
+                xref="paper",
+                yref="paper",
+                text=f"Year: {years[i]}",
+                font=dict(size=20),
+                showarrow=False,
+                xanchor="right"
+            )
+        ]
+    
+        fig.show()
     
     @staticmethod
     def plot_clustered_data(data: List[Tuple[float, float]], labels: List[int]) -> None:
