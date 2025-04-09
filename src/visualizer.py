@@ -6,6 +6,7 @@ from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 from IPython.display import HTML
+from plotly.subplots import make_subplots
 #Working on: Implement a custom visualization technique for displaying multidimensional climate data, Create an animated visualization showing climate change over time
 class Visualizer:
     @staticmethod
