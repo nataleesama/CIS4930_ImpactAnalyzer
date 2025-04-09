@@ -35,7 +35,7 @@ def main():
     elif args.action == "anomalies":
         # Use just the target variable for anomaly detection
         anomalies = detect_anomalies(y)
-        Visualizer.plot_anomalies(y.tolist(), anomalies.tolist())
+        Visualizer.plot_anomalies(y.tolist(), anomalies.tolist(),years)
 
 
 if __name__ == "__main__":
