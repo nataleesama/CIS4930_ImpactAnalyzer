@@ -147,28 +147,55 @@ class Visualizer:
         plt.show()
 
     @staticmethod
-    def plot_anomalies(time_series: List[float], anomalies: List[bool]) -> None:
-        plt.figure(figsize=(10, 6))
-        
-   
-        time_series = np.array(time_series)
-        anomalies = np.array(anomalies)
+    def plot_anomalies(time_series, anomalies, dates=None):
+        fig = go.Figure()
     
-        time_axis = np.arange(len(time_series))
-        
-        plt.plot(time_axis, time_series, 'b-', label='Normal', alpha=0.7)
-        
-        if any(anomalies):
-            anomaly_points = time_series[anomalies]
-            anomaly_times = time_axis[anomalies]
-            plt.scatter(anomaly_times, anomaly_points, color='red', 
-                       s=100, label='Anomaly', edgecolors='black', zorder=3)
-        
-        plt.xlabel('Year')
-        plt.ylabel('Value')
-        plt.title('Time Series with Anomalies Highlighted')
-        plt.legend()
-        plt.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plt.show()
+    # Convert to pandas Series for easier handling
+        ts = pd.Series(time_series)
+    
+        ts.index = pd.to_datetime(dates)
+    
+    # Main time series
+        fig.add_trace(go.Scatter(
+            x=ts.index ,
+            y=ts.values,
+            mode='lines',
+            name='Precipitation',
+            line=dict(color='blue', width=2)
+        ))
+    
+    # Anomalies
+        if anomalies.any():
+            anomaly_series = ts[anomalies]
+            fig.add_trace(go.Scatter(
+                x=anomaly_series.index,
+                y=anomaly_series.values,
+                mode='markers',
+                name='Anomalies',
+                marker=dict(
+                    color='red',
+                    size=10,
+                    line=dict(width=2, color='black')
+                ),
+                hovertext=[f"Value: {y:.2f}" for y in anomaly_series.values]
+        ))
+    
+    # Rolling mean
+        window_size = min(10, len(ts)//4)
+        fig.add_trace(go.Scatter(
+            x=ts.index,
+            y=ts.rolling(window_size).mean(),
+            mode='lines',
+            name=f'{window_size}-period mean',
+            line=dict(color='green', dash='dash')
+    ))
+    
+        fig.update_layout(
+            title="Precipitation Anomalies",
+            xaxis_title="Date",
+            yaxis_title="Precipitation",
+            hovermode="x unified"
+    )
+    
+        fig.show()
 
