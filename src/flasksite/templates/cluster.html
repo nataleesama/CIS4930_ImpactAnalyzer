@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Prediction Graph</title>
+        <title>Cluster Graph</title>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     </head>
     <body>
+        <script>
+            {{ clustergraph | safe }};
+            Plotly.newPlot('plot', graph.data, graph.layout);
+        </script>
+        
+
         <a href="{{ url_for('home') }}">Back to Home</a>
     </body>
 </html>

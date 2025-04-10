@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')  # Make sure this is set if matplotlib is imported anywhere
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -7,6 +10,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 from IPython.display import HTML
 from plotly.subplots import make_subplots
+import plotly.io
+import plotly.express
 #Working on: Implement a custom visualization technique for displaying multidimensional climate data, Create an animated visualization showing climate change over time
 class Visualizer:
     @staticmethod
@@ -126,6 +131,9 @@ class Visualizer:
         ]
     
         fig.show()
+
+        # to display in html
+        #return plotly.io.to_html(fig, full_html=False, include_plotlyjs='cdn')
     
     @staticmethod
     def plot_clustered_data(data: List[Tuple[float, float]], labels: List[int]) -> None:
@@ -145,6 +153,30 @@ class Visualizer:
         #plt.axis(bounds) #so this sets the max for both x and y
         plt.grid(True)
         plt.show()
+        """
+        x_value, y_value = zip(*data)
+
+        fig = plotly.express.scatter(
+            x=x_value,
+            y=y_value,
+            title="Clustered Data",
+            labels={'x': 'Year', 'y': 'Precipitation'}
+        )
+
+        # Customize ticks
+        fig.update_layout(
+            xaxis=dict(
+                tickvals=list(range(2020, 2025)),
+                ticktext=[f"08/{year}" for year in range(2020, 2025)]
+            ),
+            xaxis_title='Date',
+            yaxis_title='Precipitation',
+            height=600
+        )
+
+        # to display in html
+        return plotly.io.to_html(fig, full_html=False, include_plotlyjs='cdn')
+        """
 
     @staticmethod
     def plot_anomalies(time_series, anomalies, dates=None):

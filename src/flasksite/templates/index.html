@@ -2,10 +2,25 @@
 <html lang="en">
     <head>
         <title>Impact Analyzer</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-        <a href="{{ url_for('predict') }}">Prediction</a>
-        <a href="{{ url_for('cluster') }}">Cluster</a>
-        <a href="{{ url_for('anomalies') }}">Anomalies</a>
+        <div class="home_container">
+            <h1>Impact Analyzer</h1>
+            <div class="home_choices">
+                <div class="choice">
+                    <a href="{{ url_for('predict') }}">Prediction</a>
+                </div>
+                <div class="choice">
+                    <a href="{{ url_for('cluster') }}">Cluster</a>
+                </div>
+                <div class="choice">
+                    <a href="{{ url_for('anomalies') }}">Anomalies</a>
+                </div>
+                <div class="choice">
+                    <a href="{{ url_for('data')}}">Data</a>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
