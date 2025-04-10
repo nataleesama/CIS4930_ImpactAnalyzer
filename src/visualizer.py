@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')  # Make sure this is set if matplotlib is imported anywhere
+matplotlib.use('Agg')  # Ensures html translation
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -131,9 +131,6 @@ class Visualizer:
         ]
     
         fig.show()
-
-        # to display in html
-        #return plotly.io.to_html(fig, full_html=False, include_plotlyjs='cdn')
     
     @staticmethod
     def plot_clustered_data(data: List[Tuple[float, float]], labels: List[int]) -> None:
@@ -153,6 +150,8 @@ class Visualizer:
         #plt.axis(bounds) #so this sets the max for both x and y
         plt.grid(True)
         plt.show()
+
+        # Equivalent Code that allows html interactive abilities
         """
         x_value, y_value = zip(*data)
 
