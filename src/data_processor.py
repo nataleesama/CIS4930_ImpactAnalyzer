@@ -33,7 +33,7 @@ class DataProcessor:
         return self.data
 
 
-    def get_features_and_target(self) -> tuple[np.ndarray,np.ndarray]:
+    def get_features_and_target(self) -> tuple[np.ndarray,np.ndarray]: #this is what returns [DateArray, Precipitation values]
         """Split data into features (year, month) and target
         (precipitation)."""
         # Features
@@ -42,14 +42,15 @@ class DataProcessor:
 
         precipitation = self.data['value'].astype(int).to_numpy()
 
-        self.data['date_float'] = self.data['date'].apply(partitionDays) #this converts evenly among the 31 days to a float represented as a 'progression' in that year's august
+        self.data['date'] = self.data['date'].to_numpy()
 
-        return self.data['date_float'], precipitation
-
-def partitionDays(dt):
-    return dt.year + (dt.day - 1) / 31
+        return self.data['date'], precipitation #data in datetime formate 2024-01-10, preciptation
     
 if __name__ == "__main__":
-    processor = DataProcessor("../data/climate_data.json")
+    #orlandoProcessor = DataProcessor("../data/orlandoData.json")
+    #miamiProcessor = DataProcessor("../data/miamiData.json")
+    tallahasseeProcessor = DataProcessor("../data/tallahasseeData.json")
     #print(processor.clean_data())
-    print(processor.get_features_and_target())
+    #print(orlandoProcessor.get_features_and_target())
+    #print(miamiProcessor.get_features_and_target())
+    print(tallahasseeProcessor.get_features_and_target())
