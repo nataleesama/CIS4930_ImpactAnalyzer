@@ -27,17 +27,17 @@ def main():
     oz = orlandoProcessor.get_precipitation()
     
     tallahasseeProcessor.load_data()
-    tallahasseeProcessor.clean_data()
+    #tallahasseeProcessor.clean_data()
     tx, ty = tallahasseeProcessor.get_features_and_target()
     tz = tallahasseeProcessor.get_precipitation()
+    tx_unnorm = tallahasseeProcessor.unnormalized_date()
 
     # Prediction Graph
     if args.action == "predict":
         model = CustomPrecipitationPredictor()
         model.fit(tx, ty)
         predictions = model.predict(tx)
-        years = [row.year for row in tx]
-        Visualizer.plot_precipitation_trend(years, ty.tolist(), predictions.tolist())
+        Visualizer.plot_precipitation_trend(tx_unnorm, ty.tolist(), predictions.tolist())
 
     # Cluster Graph
     elif args.action == "cluster":

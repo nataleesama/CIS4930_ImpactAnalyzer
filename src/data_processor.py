@@ -32,9 +32,28 @@ class DataProcessor:
         # Find normalized value for each data row
         # Creates new column: 'normalized'
         self.data['normalized'] = self.data['value'].map(lambda x: (x - min_precip) / (max_precip - min_precip)) 
+        
+        #self.data['date'] = self.data['date'].apply(partitionDays)
+        
+        #min_date = self.data['date'].min()
+        #max_date = self.data['date'].max()
+        
+        #self.data['normalizedDates'] = self.data['date'].map(lambda x: (x - min_date) / (max_date - min_date)) 
+
+        x_ordinal = self.data['date'].map(lambda d: d.toordinal())
+
+        # Step 2: Normalize
+        min_date = x_ordinal.min()
+        max_date = x_ordinal.max()
+
+        self.data['datenormalized'] = x_ordinal.map(lambda d: (d - min_date) / (max_date - min_date))
+        
 
         return self.data
 
+    def unnormalized_date(self)->np.ndarray:
+        year = [int(d.year) for d in self.data['date']]
+        return year
 
     def get_features_and_target(self) -> tuple[np.ndarray,np.ndarray]: #this is what returns [DateArray, Precipitation values]
         """Split data into features (year, month) and target
@@ -42,20 +61,30 @@ class DataProcessor:
         # Ensure No Empty Data
         self.clean_data()
         # Features
-        self.data['date'] = pd.to_datetime(self.data['date']) #from string to date time object
+        #self.data['date'] = pd.to_datetime(self.data['date']) #from string to date time object
         #then convert to some fraction of a year in progress to another
 
         precipitation = self.data['normalized'].astype(float).to_numpy()
-        #print(f"Normalized: {self.data['normalized']}\n\n\n")
-
-        self.data['date'] = self.data['date'].to_numpy()
-        self.data['dateFloat'] = self.data['date'].apply(partitionDays)
+        dates = self.data['datenormalized'].astype(float).to_numpy()
         
         return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
     def get_precipitation(self):
         return self.data['value']
+        #return dates, precipitation #data in datetime formate 2024-01-10, preciptation
+
+"""def normalize(dt):
+    dt_series = pd.Series(dt)
+    min_date = dt_series.min()
+    max_date = dt_series.max()
+
+    normalized = dt_series.map(lambda x: (x - min_date) / (max_date - min_date))
+"""       
 def partitionDays(dt):
-    return dt.year + (dt.day -1) /365
+    start_of_year = dt.replace(month=1, day=1)
+    end_of_year = dt.replace(month=12, day=31)
+    days_in_year = (end_of_year - start_of_year).days + 1
+    day_of_year = (dt - start_of_year).days + 1
+    return dt.year + (day_of_year - 1) / days_in_year
 
 if __name__ == "__main__":
     #orlandoProcessor = DataProcessor("../data/orlandoData.json")

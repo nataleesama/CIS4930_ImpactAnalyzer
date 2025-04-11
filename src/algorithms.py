@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
+from data_processor import normalize
 from sklearn.base import BaseEstimator, RegressorMixin
 from typing import Tuple
 from sklearn.linear_model import HuberRegressor
 
 class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
     # Custom Linear Regression Model
-    def __init__(self, learning_rate: float = 0.01, n_iterations: int= 1000):
+    def __init__(self, learning_rate: float = 0.001, n_iterations: int= 1000):
         self.learning_rate = learning_rate
         self.n_iterations = n_iterations
         self.weight = 0
@@ -14,8 +15,11 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> 'CustomPrecipitationPredictor':
         # Flatten and find length to loop through
-        x = pd.to_datetime(x)
-        x = x.map(lambda d: d.toordinal()).to_numpy()
+        #x = x.apply(normalize)
+        #x = pd.to_datetime(x)
+        #x = x.map(lambda d: d.toordinal()).to_numpy()
+
+
         n = len(x)
 
         for i in range(self.n_iterations):
@@ -35,11 +39,12 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
             self.weight -= self.learning_rate * update_w
             # Updated/"train" bias
             self.bias -= self.learning_rate * update_b
+
     
     def predict(self, x: np.ndarray) -> np.ndarray:
         # return prediction post linear regression training
-        x = pd.to_datetime(x)
-        x = x.map(lambda d: d.toordinal()).to_numpy()
+        #x = pd.to_datetime(x)
+        #x = x.map(lambda d: d.toordinal()).to_numpy()
         return self.weight * x + self.bias
     
     def getSlope(self, x:np.array) -> float:
