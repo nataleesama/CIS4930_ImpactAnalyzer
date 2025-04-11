@@ -4,19 +4,40 @@ from typing import Tuple
 
 
 class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
+    # Custom Linear Regression Model
     def __init__(self, learning_rate: float = 0.01, n_iterations: int= 1000):
         self.learning_rate = learning_rate
         self.n_iterations = n_iterations
-        self.weights = None
-        self.bias =0
+        self.weight = 0
+        self.bias = 0
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> 'CustomPrecipitationPredictor':
-        #using the skLearn linear regression line of best fit, from library
-        self.model.fit(x,y)
-        return self
+        # Flatten and find length to loop through
+        x = x.flatten()
+        n = len(x)
+
+        for i in range(self.n_iterations):
+            # Linear Regression Prediction Formula: y = wx + b
+            # predict the corresponding y value
+            predicted_y = self.weight * x + self.bias
+
+            # Determine how to improve weight based on error
+            # Error = difference between predicted y and actual y
+            update_w = (-2 / n) * np.sum((y - predicted_y) * x)
+
+            # Determine how to improve bias based on error
+            update_b = (-2 / n) * np.sum(y - predicted_y)
+
+            # Make Improvements
+            # Update/"train" weight
+            self.weight -= self.learning_rate * update_w
+            # Updated/"train" bias
+            self.bias -= self.learning_rate * update_b
     
     def predict(self, x: np.ndarray) -> np.ndarray:
-        return self.model.predict(x) #from "LinearRegression()"
+        # return prediction post linear regression training
+        x = x.flatten()
+        return self.weight * x + self.bias
     
     def getSlope(self, x:np.array) -> float:
         """custom predication algorithm"""

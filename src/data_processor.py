@@ -45,7 +45,8 @@ class DataProcessor:
         self.data['date'] = pd.to_datetime(self.data['date']) #from string to date time object
         #then convert to some fraction of a year in progress to another
 
-        precipitation = self.data['value'].astype(float).to_numpy()
+        precipitation = self.data['normalized'].astype(float).to_numpy()
+        print(f"Normalized: {self.data['normalized']}\n\n\n")
 
         self.data['date'] = self.data['date'].to_numpy()
 

@@ -1,6 +1,6 @@
 import argparse
 from data_processor import DataProcessor
-from algorithms import CustomPrecipitationPredictor, custom_clustering, detect_anomalies
+from algorithms import CustomPrecipitationPredictor
 from visualizer import Visualizer
 import numpy as np
 

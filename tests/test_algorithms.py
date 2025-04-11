@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 sys.path.append(os.path.abspath('../src'))
-from algorithms import CustomPrecipitationPredictor, detect_anomalies, custom_clustering
+from algorithms import CustomPrecipitationPredictor
 
 class TestAlgorithms(unittest.TestCase):
     def setUp(self):
