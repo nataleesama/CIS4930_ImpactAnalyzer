@@ -4,6 +4,7 @@ matplotlib.use('Agg')  # Ensures html translation
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import pandas as pd
 from typing import List, Tuple, Optional
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D

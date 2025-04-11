@@ -12,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     # Load and preprocess data
-    processor = DataProcessor("../data/climate_data.json")
+    processor = DataProcessor("../data/tallahasseeData.json")
     processor.load_data()
     processor.clean_data()
     x, y = processor.get_features_and_target() # get dates and values
@@ -22,7 +22,7 @@ def main():
         model = CustomPrecipitationPredictor()
         model.fit(x, y)
         predictions = model.predict(x)
-        years = [row[0] for row in x]
+        years = [row.year for row in x]
         Visualizer.plot_precipitation_trend(years, y.tolist(), predictions.tolist())
 
     # Cluster Graph

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator, RegressorMixin
 from typing import Tuple
 
@@ -13,7 +14,8 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> 'CustomPrecipitationPredictor':
         # Flatten and find length to loop through
-        x = x.flatten()
+        x = pd.to_datetime(x)
+        x = x.map(lambda d: d.toordinal()).to_numpy()
         n = len(x)
 
         for i in range(self.n_iterations):
@@ -36,7 +38,8 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
     
     def predict(self, x: np.ndarray) -> np.ndarray:
         # return prediction post linear regression training
-        x = x.flatten()
+        x = pd.to_datetime(x)
+        x = x.map(lambda d: d.toordinal()).to_numpy()
         return self.weight * x + self.bias
     
     def getSlope(self, x:np.array) -> float:

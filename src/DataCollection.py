@@ -5,14 +5,14 @@ endpoint = "https://www.ncei.noaa.gov/cdo-web/api/v2/data"
 token = "kKyfMZMYhpcxvQUbmfhmpBBfYvvHXaOO"
 #output = "../data/climate_data.json"
 
-def PullData(startdate, enddate, stationId): #add another measurement for multidimensional data
+def PullData(quantity, startdate, enddate, stationId): #add another measurement for multidimensional data
     parameters = {
         "datasetid": "GHCND",
         "datatypeid" : "PRCP",
         "stationid" : f"GHCND:{stationId}",
         "startdate" : startdate,               
         "enddate" : enddate,
-        "limit" : 365,
+        "limit" : quantity,
         "units" : "metric"
     }
 
@@ -24,7 +24,7 @@ def PullData(startdate, enddate, stationId): #add another measurement for multid
         print(f"Error: {response.status_code}, {response.text}")
 
 
-def CombineData(stationId,output):
+def CombineData(quantity, stationId,output):
     #Parameters to pull data from the last five years
     #API only allows 1 year increments per pull
     Dates =[
@@ -38,7 +38,7 @@ def CombineData(stationId,output):
     Data = []
 
     for startdate, enddate in Dates:
-        PulledData = PullData(startdate, enddate,stationId=stationId)
+        PulledData = PullData(quantity, startdate, enddate,stationId=stationId)
         if PulledData:
             Data.extend(PulledData)
         else:
@@ -49,7 +49,8 @@ def CombineData(stationId,output):
 
 
 if __name__ == "__main__":
-    CombineData(stationId="USW00093805",output="../data/tallahasseeData.json") #tallahassee
-    #CombineData(stationId="USW00012839",output="../data/miamiData.json") #miami
-    #CombineData(stationId="USW00012815",output="../data/orlandoData.json") #jupiter
+    #CombineData(365, stationId="USW00093805",output="../data/tallahasseeData.json") #tallahassee
+    #CombineData(365, stationId="USW00012839",output="../data/miamiData.json") #miami
+    #CombineData(365, stationId="USW00012815",output="../data/orlandoData.json") #jupiter
+    CombineData(5, stationId="USW00093805",output="../data/test_data.json")
     pass

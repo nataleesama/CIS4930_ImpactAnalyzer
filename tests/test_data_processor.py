@@ -5,7 +5,7 @@ import sys
 import os
 sys.path.append(os.path.abspath('../src'))
 from data_processor import DataProcessor #this should be in source
-from DataCollection import PullData
+from DataCollection import CombineData, PullData
 
 class TestDataProcessor(unittest.TestCase):
     def setUp(self):

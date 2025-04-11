@@ -1,7 +1,10 @@
 import unittest
 import numpy as np
-from visualizer import Visualizer
 import matplotlib.pyplot as plt
+import sys
+import os
+sys.path.append(os.path.abspath('../src'))
+from visualizer import Visualizer
 
 class TestVisualizer(unittest.TestCase):
     def setUp(self):
