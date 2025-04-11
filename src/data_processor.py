@@ -19,7 +19,10 @@ class DataProcessor:
         data."""
         # Remove Rows with Missing Values 
         # Specifically in the precipitation column
-        self.data.dropna(subset=['value'], inplace=True) 
+        self.data.dropna(subset=['value'], inplace=True)
+        
+        # if dropped, fix indexing
+        self.data.reset_index(drop=True, inplace=True)
 
         # Min-Max Normalization
         # normalized = (x - min) / (max - min)
@@ -36,11 +39,13 @@ class DataProcessor:
     def get_features_and_target(self) -> tuple[np.ndarray,np.ndarray]: #this is what returns [DateArray, Precipitation values]
         """Split data into features (year, month) and target
         (precipitation)."""
+        # Ensure No Empty Data
+        self.clean_data()
         # Features
         self.data['date'] = pd.to_datetime(self.data['date']) #from string to date time object
         #then convert to some fraction of a year in progress to another
 
-        precipitation = self.data['value'].astype(int).to_numpy()
+        precipitation = self.data['value'].astype(float).to_numpy()
 
         self.data['date'] = self.data['date'].to_numpy()
 
