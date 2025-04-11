@@ -19,14 +19,17 @@ def main():
     miamiProcessor.load_data()
     miamiProcessor.clean_data()
     mx, my = miamiProcessor.get_features_and_target() # get dates and values
-
+    mz = miamiProcessor.get_precipitation()
+    
     orlandoProcessor.load_data()
     orlandoProcessor.clean_data()
     ox, oy = orlandoProcessor.get_features_and_target()
-
+    oz = orlandoProcessor.get_precipitation()
+    
     tallahasseeProcessor.load_data()
     tallahasseeProcessor.clean_data()
     tx, ty = tallahasseeProcessor.get_features_and_target()
+    tz = tallahasseeProcessor.get_precipitation()
 
     # Prediction Graph
     if args.action == "predict":
@@ -45,9 +48,26 @@ def main():
     # Anomalies
     elif args.action == "anomalies":
         # Use just the target variable for anomaly detection
-        #anomalies = detect_anomalies(y)
-        #Visualizer.plot_anomalies(y.tolist()) #y is the get features and target, but want to convert this to the separate stations
-        Visualizer.plot_anomalies(my.tolist(),oy.tolist(),ty.tolist()) #send in these separated lists, and handle in that visualizeer funciton
+        model = CustomPrecipitationPredictor()
+
+        # Prepare station data dictionary
+        station_data = {
+            'Tallahassee': {
+                'values': z,
+                'anomalies': model.detect_anomalies(tx, tz)[0]
+            },
+            'Miami': {
+                'values': zM,
+                'anomalies': model.detect_anomalies(mx, mz)[0]
+            },
+            'Orlando': {
+                'values': zO,
+                'anomalies': model.detect_anomalies(ox, oz)[0]
+            }
+        }
+
+        # Plot combined boxplot with anomalies
+        Visualizer.plot_anomalies(station_data)
 
 
 if __name__ == "__main__":
