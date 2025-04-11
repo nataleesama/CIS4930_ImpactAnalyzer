@@ -3,16 +3,16 @@ import json
 
 endpoint = "https://www.ncei.noaa.gov/cdo-web/api/v2/data"
 token = "kKyfMZMYhpcxvQUbmfhmpBBfYvvHXaOO"
-output = "../data/climate_data.json"
+#output = "../data/climate_data.json"
 
-def PullData(startdate, enddate):
+def PullData(startdate, enddate, stationId):
     parameters = {
-        "datasetid": "GHCND",
+        "datasetid": "GHCND", #these all should be the same value
         "datatypeid" : "PRCP",                 #Precipitation
-        "stationid" : "GHCND:USW00093805",     #Tallahassee Station
+        "stationid" : f"GHCND:{stationId}", #USW00093805",     #Tallahassee Station
         "startdate" : startdate,               
         "enddate" : enddate,
-        "limit" : 31,
+        "limit" : 365,
         "units" : "metric"
     }
 
@@ -24,23 +24,21 @@ def PullData(startdate, enddate):
         print(f"Error: {response.status_code}, {response.text}")
 
 
-def CombineData():
-    Data = []
-
+def CombineData(stationId,output):
     #Parameters to pull data from the last five years
     #API only allows 1 year increments per pull
-    #August: Typically Rainiest Month
-    
     Dates =[
-        ("2024-08-01", "2024-08-31"),
-        ("2023-08-01", "2023-08-31"),
-        ("2022-08-01", "2022-08-31"),
-        ("2021-08-01", "2021-08-31"),
-        ("2020-08-01", "2020-08-31")
+        ("2024-01-01", "2024-12-31"),
+        ("2023-01-01", "2023-12-31"),
+        ("2022-01-01", "2022-12-31"),
+        ("2021-01-01", "2021-12-31"),
+        ("2020-01-01", "2020-12-31") #capturing the whole year over the course of 5 years
     ]
 
+    Data = []
+
     for startdate, enddate in Dates:
-        PulledData = PullData(startdate, enddate)
+        PulledData = PullData(startdate, enddate,stationId=stationId)
         if PulledData:
             Data.extend(PulledData)
         else:
@@ -51,5 +49,8 @@ def CombineData():
 
 
 if __name__ == "__main__":
-    CombineData()
+    #CombineData(stationId="USW00093805",output="../data/tallahasseData.json") #tallahassee
+    #CombineData(stationId="USW00012839",output="../data/miamiData.json") #miami
+    CombineData(stationId="US1FLPB0009",output="../data/jupiterData.json") #jupiter
+
     

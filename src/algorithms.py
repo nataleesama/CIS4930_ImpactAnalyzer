@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.base import BaseEstimator, RegressorMixin
-from sklearn.linear_model import LinearRegression
 from typing import Tuple
 
 
@@ -10,7 +9,6 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
         self.n_iterations = n_iterations
         self.weights = None
         self.bias =0
-        self.model =LinearRegression()
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> 'CustomPrecipitationPredictor':
         #using the skLearn linear regression line of best fit, from library
@@ -20,24 +18,30 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
     def predict(self, x: np.ndarray) -> np.ndarray:
         return self.model.predict(x) #from "LinearRegression()"
     
-def detect_anomalies(time_series: np.ndarray, window_size: int=10,threshold: float = 2.0) -> np.ndarray:
-    """detect anomalies"""
-    anomalies = []
-    rolling_mean = np.convolve(time_series, np.ones(window_size)/window_size, mode = 'valid')
+    def getSlope(self, x:np.array) -> float:
+        """custom predication algorithm"""
+        #data needs to translated and captured properly from api call PRE this funciton, then pass in such list
+        x, y = x[:,0], x[:,1]
+        n = len(x)
+        num = n * np.sum(x * y) - np.sum(x) * np.sum(y)
+        den = n * np.sum(x**2) - np.sum(x)**2
+        return num / den if den != 0 else float('inf')
+    
+    def detect_anomalies(self, list:np.array, trend =0, threshold = 1) -> np.ndarray:
+        """detect anomalies"""
+        if trend ==0:
+            trend = self.getSlope(x)
+        x, y = list[:,0], list[:,1]
+        mean_x, mean_y = np.mean(x), np.mean(y)
+        intercept = mean_y - trend * mean_x  #pointslope
 
-    for i in range(len(rolling_mean)):
-        window_data = time_series[i:i+window_size]
-        std = np.std(window_data)
-        if std ==0:
-            continue
-        z_score = (time_series[i+window_size -1]- rolling_mean[i])/std
-        if abs(z_score) >threshold:
-            anomalies.append(i+window_size -1)
-        
-    return np.array(anomalies)
+        outliers = []
+        for i, (xi, yi) in enumerate(list):
+            expected_y = trend * xi + intercept
+            if abs(yi - expected_y) > threshold:
+                outliers.append((xi, yi))
+        return outliers
+    
+    def custom_clustering(data: np.ndarray, n_clusters: int) -> np.ndarray:
+        pass
 
-def custom_clustering(data: np.ndarray, n_clusters: int) -> np.ndarray:
-    from sklearn.cluster import KMeans
-    kmeans = KMeans(n_clusters=n_clusters,random_state=42)
-    lables = kmeans.fit_predict(data)
-    return lables
