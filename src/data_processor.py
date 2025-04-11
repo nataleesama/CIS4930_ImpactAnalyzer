@@ -49,9 +49,12 @@ class DataProcessor:
         #print(f"Normalized: {self.data['normalized']}\n\n\n")
 
         self.data['date'] = self.data['date'].to_numpy()
+        self.data['dateFloat'] = self.data['date'].apply(partitionDays)
+        
+        return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
 
-        return self.data['date'], precipitation #data in datetime formate 2024-01-10, preciptation
-
+def partitionDays(dt):
+    return dt.year + (dt.day -1) /365
 
 if __name__ == "__main__":
     #orlandoProcessor = DataProcessor("../data/orlandoData.json")
@@ -59,5 +62,6 @@ if __name__ == "__main__":
     tallahasseeProcessor = DataProcessor("../data/tallahasseeData.json")
     #print(processor.clean_data())
     #print(orlandoProcessor.get_features_and_target())
-    #print(miamiProcessor.get_features_and_target())
-    print(tallahasseeProcessor.clean_data())
+    print(tallahasseeProcessor.get_features_and_target())
+   
+
