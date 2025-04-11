@@ -53,15 +53,15 @@ def main():
         # Prepare station data dictionary
         station_data = {
             'Tallahassee': {
-                'values': z,
+                'values': tz,
                 'anomalies': model.detect_anomalies(tx, tz)[0]
             },
             'Miami': {
-                'values': zM,
+                'values': mz,
                 'anomalies': model.detect_anomalies(mx, mz)[0]
             },
             'Orlando': {
-                'values': zO,
+                'values': oz,
                 'anomalies': model.detect_anomalies(ox, oz)[0]
             }
         }
