@@ -52,7 +52,8 @@ class DataProcessor:
         self.data['dateFloat'] = self.data['date'].apply(partitionDays)
         
         return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
-
+    def get_precipitation(self):
+        return self.data['value']
 def partitionDays(dt):
     return dt.year + (dt.day -1) /365
 
