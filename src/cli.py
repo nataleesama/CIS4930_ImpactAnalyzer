@@ -34,8 +34,10 @@ def main():
     # Anomalies
     elif args.action == "anomalies":
         # Use just the target variable for anomaly detection
-        anomalies = detect_anomalies(y)
-        Visualizer.plot_anomalies(y.tolist(), anomalies.tolist(),years)
+        #anomalies = detect_anomalies(y)
+        #Visualizer.plot_anomalies(y.tolist()) #y is the get features and target, but want to convert this to the separate stations
+        miami, orlando, tallahassee = processor.separateByStation()
+        Visualizer.plot_anomalies(miami,orlando,tallahassee) #send in these separated lists, and handle in that visualizeer funciton
 
 
 if __name__ == "__main__":

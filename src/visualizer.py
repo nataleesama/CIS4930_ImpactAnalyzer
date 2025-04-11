@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')  # Ensures html translation
+#matplotlib.use('Agg')  # Ensures html translation
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -179,55 +179,17 @@ class Visualizer:
         """
 
     @staticmethod
-    def plot_anomalies(time_series, anomalies, dates=None):
-        fig = go.Figure()
-    
-    # Convert to pandas Series for easier handling
-        ts = pd.Series(time_series)
-    
-        ts.index = pd.to_datetime(dates)
-    
-    # Main time series
-        fig.add_trace(go.Scatter(
-            x=ts.index ,
-            y=ts.values,
-            mode='lines',
-            name='Precipitation',
-            line=dict(color='blue', width=2)
-        ))
-    
-    # Anomalies
-        if anomalies.any():
-            anomaly_series = ts[anomalies]
-            fig.add_trace(go.Scatter(
-                x=anomaly_series.index,
-                y=anomaly_series.values,
-                mode='markers',
-                name='Anomalies',
-                marker=dict(
-                    color='red',
-                    size=10,
-                    line=dict(width=2, color='black')
-                ),
-                hovertext=[f"Value: {y:.2f}" for y in anomaly_series.values]
-        ))
-    
-    # Rolling mean
-        window_size = min(10, len(ts)//4)
-        fig.add_trace(go.Scatter(
-            x=ts.index,
-            y=ts.rolling(window_size).mean(),
-            mode='lines',
-            name=f'{window_size}-period mean',
-            line=dict(color='green', dash='dash')
-    ))
-    
-        fig.update_layout(
-            title="Precipitation Anomalies",
-            xaxis_title="Date",
-            yaxis_title="Precipitation",
-            hovermode="x unified"
-    )
-    
-        fig.show()
+    def plot_anomalies(miami,orlando,tallahassee):
+        fig, axs = plt.subplots(1, 3, figsize=(15, 6))  # 1 row, 3 columns
 
+        axs[0].boxplot(miami)
+        axs[0].set_title("Miami")
+
+        axs[1].boxplot(orlando)
+        axs[1].set_title("Orlando")
+
+        axs[2].boxplot(tallahassee)
+        axs[2].set_title("Tallahassee")
+
+        plt.tight_layout()
+        plt.show()
