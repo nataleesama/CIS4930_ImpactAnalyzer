@@ -23,7 +23,7 @@ class DataProcessor:
         self.data = self.data[self.data['value'] != 0.0] #remove all entries with no precipitation
         # if dropped, fix indexing
         self.data.reset_index(drop=True, inplace=True)
-
+        
         # Min-Max Normalization
         # normalized = (x - min) / (max - min)
         min_precip = self.data['value'].min()
@@ -49,12 +49,33 @@ class DataProcessor:
         #print(f"Normalized: {self.data['normalized']}\n\n\n")
 
         self.data['date'] = self.data['date'].to_numpy()
-        self.data['dateFloat'] = self.data['date'].apply(partitionDays)
-        
-        return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
 
-def partitionDays(dt):
-    return dt.year + (dt.day -1) /365
+        return self.data['date'], precipitation #data in datetime formate 2024-01-10, preciptation
+    def get_precipitation(self):
+        return self.data['value']
+    def separateByStationWithAnomalies(self, x, z, anomalies):
+        """Returns dict with dates, values, and anomalies per station"""
+        stations = {
+            'Miami': {'dates': [], 'values': [], 'anomalies': []},
+            'Orlando': {'dates': [], 'values': [], 'anomalies': []},
+            'Tallahassee': {'dates': [], 'values': [], 'anomalies': []}
+        }
+        
+        for date, precip, is_anomaly, station in zip(x, z, anomalies, self.data['station']):
+            if station == 'GHCND:USW00012839':
+                key = 'Miami'
+            elif station == 'GHCND:USW00012815':
+                key = 'Orlando'
+            else:
+                key = 'Tallahassee'
+                
+            stations[key]['dates'].append(date)
+            stations[key]['values'].append(precip)
+            stations[key]['anomalies'].append(is_anomaly)
+        
+        return stations
+
+
 
 if __name__ == "__main__":
     #orlandoProcessor = DataProcessor("../data/orlandoData.json")
@@ -62,6 +83,5 @@ if __name__ == "__main__":
     tallahasseeProcessor = DataProcessor("../data/tallahasseeData.json")
     #print(processor.clean_data())
     #print(orlandoProcessor.get_features_and_target())
-    print(tallahasseeProcessor.get_features_and_target())
-   
-
+    #print(miamiProcessor.get_features_and_target())
+    print(tallahasseeProcessor.clean_data())
