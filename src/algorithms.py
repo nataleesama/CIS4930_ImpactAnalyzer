@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, RegressorMixin
 from typing import Tuple
-
+from sklearn.linear_model import HuberRegressor
 
 class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
     # Custom Linear Regression Model
@@ -51,20 +51,25 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
         den = n * np.sum(x**2) - np.sum(x)**2
         return num / den if den != 0 else float('inf')
     
-    def detect_anomalies(self, list:np.array, trend =0, threshold = 1) -> np.ndarray:
-        """detect anomalies"""
-        if trend ==0:
-            trend = self.getSlope(x)
-        x, y = list[:,0], list[:,1]
-        mean_x, mean_y = np.mean(x), np.mean(y)
-        intercept = mean_y - trend * mean_x  #pointslope
+    def detect_anomalies(self, x: np.ndarray, y: np.ndarray, num_std_dev: float = 2.0) -> Tuple[np.ndarray, np.ndarray]:
+        # Convert dates to ordinals
+        x_ord = pd.to_datetime(x).map(lambda d: d.toordinal()).to_numpy()
 
-        outliers = []
-        for i, (xi, yi) in enumerate(list):
-            expected_y = trend * xi + intercept
-            if abs(yi - expected_y) > threshold:
-                outliers.append((xi, yi))
-        return outliers
+        # Fit to log(y+1) to handle precipitation distribution
+        y_log = np.log1p(y)
+        X = x_ord.reshape(-1, 1)
+
+        # Robust linear regression
+        model = HuberRegressor().fit(X, y_log)
+        pred = model.predict(X)
+        residuals = y_log - pred
+
+        # Calculate threshold based on absolute errors
+        mad = np.median(np.abs(residuals - np.median(residuals)))
+        threshold = num_std_dev * 1.4826 * mad  # Convert MAD to SD
+
+        anomalies = np.abs(residuals) > threshold
+        return anomalies, y
     
     def custom_clustering(data: np.ndarray, n_clusters: int) -> np.ndarray:
         pass
