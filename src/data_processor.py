@@ -52,22 +52,6 @@ class DataProcessor:
 
         return self.data['date'], precipitation #data in datetime formate 2024-01-10, preciptation
 
-    def separateByStation(self) -> tuple[np.ndarray,np.ndarray,np.ndarray]:
-        self.clean_data()
-        miami, orlando, tallahassee = [],[],[]
-
-        for _, row in self.data.iterrows(): #extract only the numbers becuase these will be used to show 3 different box plots
-            value = row['normalized']
-            station = row['station']
-            if station == 'GHCND:USW00012839':
-                miami.append(value)
-            elif station =='GHCND:USW00012815':
-                orlando.append(value)
-            elif station =='GHCND:USW00093805':
-                tallahassee.append(value)
-        return np.array(miami), np.array(orlando), np.array(tallahassee)
-
-
 
 if __name__ == "__main__":
     #orlandoProcessor = DataProcessor("../data/orlandoData.json")
