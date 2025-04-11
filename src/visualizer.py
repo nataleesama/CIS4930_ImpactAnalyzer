@@ -13,6 +13,9 @@ from IPython.display import HTML
 from plotly.subplots import make_subplots
 import plotly.io
 import plotly.express
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 #Working on: Implement a custom visualization technique for displaying multidimensional climate data, Create an animated visualization showing climate change over time
 class Visualizer:
     @staticmethod
@@ -179,17 +182,89 @@ class Visualizer:
         """
 
     @staticmethod
-    def plot_anomalies(miami,orlando,tallahassee):
-        fig, axs = plt.subplots(1, 3, figsize=(15, 6))  # 1 row, 3 columns
+    def plot_anomalies(station_data: dict):
+        fig, ax = plt.subplots(figsize=(12, 6))
 
-        axs[0].boxplot(miami)
-        axs[0].set_title("Miami")
+        # Calculate consistent thresholds for both boxplot and anomalies
+        for station in station_data:
+            log_values = np.log1p(station_data[station]['values'])
 
-        axs[1].boxplot(orlando)
-        axs[1].set_title("Orlando")
+            # Calculate percentiles to match boxplot whis=[5,95]
+            lower_bound = np.percentile(log_values, 5)
+            upper_bound = np.percentile(log_values, 95)
 
-        axs[2].boxplot(tallahassee)
-        axs[2].set_title("Tallahassee")
+            # Recalculate anomalies to match these bounds
+            station_data[station]['anomalies'] = (log_values < lower_bound) | (log_values > upper_bound)
+            station_data[station]['upper_whisker'] = upper_bound  # For reference line
+
+        stations = list(station_data.keys())
+        boxplot_data = [np.log1p(station_data[station]['values']) for station in stations]
+
+        # Create boxplot with matching percentiles
+        boxplot = ax.boxplot(boxplot_data,
+                            positions=range(len(stations)),
+                            patch_artist=True,
+                            widths=0.6,
+                            whis=[5, 95])  # Matches our anomaly bounds
+
+        # Visual enhancements
+        colors = ['#1f77b4', '#2ca02c', '#d62728']
+        for i, color in enumerate(colors):
+            boxplot['boxes'][i].set_facecolor(color)
+            boxplot['medians'][i].set_color('white')
+            boxplot['whiskers'][2*i+1].set_color(color)  # Upper whisker
+            boxplot['whiskers'][2*i+1].set_linestyle(':')
+
+            # Add threshold reference line
+            ax.axhline(station_data[stations[i]]['upper_whisker'], 
+                    color=color, linestyle=':', alpha=0.3)
+
+        # Plot points with clear anomaly distinction
+        for i, (station, color) in enumerate(zip(stations, colors)):
+            values = np.array(station_data[station]['values'])
+            anomalies = np.array(station_data[station]['anomalies'], dtype=bool)
+            log_values = np.log1p(values)
+
+            # Plot normal points (smaller, semi-transparent)
+            normal = log_values[~anomalies]
+            ax.scatter([i + 0.1]*len(normal), normal,
+                    color=color, alpha=0.5, s=30, 
+                    edgecolors='white', linewidths=0.5)
+
+            # Plot anomalies (larger, bright)
+            anomaly_vals = log_values[anomalies]
+            ax.scatter([i - 0.1]*(len(anomaly_vals)), anomaly_vals,
+                    color='yellow', marker='X', s=150,
+                    linewidths=2, edgecolors='black')
+
+        # Dual y-axis labels
+        def log_to_actual(y):
+            return f"{np.expm1(y):.1f}" if y >=0 else "0"
+
+        y_ticks = [0, 1, 2, 3, 4]
+        ax.set_yticks(y_ticks)
+        ax.set_yticklabels([log_to_actual(y) for y in y_ticks])
+        ax.set_ylabel('Precipitation (inches)', labelpad=20)
+        ax.text(-0.08, 0.5, 'log(precip + 1)',
+            rotation=90, va='center', ha='right',
+            transform=ax.transAxes)
+
+        # Enhanced legend
+        legend_elements = [ Line2D([0], [0], marker='o', color='w', label='Normal', markerfacecolor='gray', markersize=10),
+            Line2D([0], [0], marker='X', color='yellow', label='Anomaly',
+                markeredgecolor='black', markersize=12),
+            *[Patch(facecolor=color, label=station) 
+            for color, station in zip(colors, stations)]]
+
+        ax.legend(handles=legend_elements, loc='upper right',
+                fontsize=12, framealpha=1)
+
+        # Final formatting
+        ax.set_xticks(range(len(stations)))
+        ax.set_xticklabels(stations, fontsize=12)
+        ax.set_title('Precipitation Anomalies (5th-95th Percentile Detection)', 
+                    pad=25, fontsize=14)
+        ax.grid(True, linestyle=':', alpha=0.3)
 
         plt.tight_layout()
         plt.show()
