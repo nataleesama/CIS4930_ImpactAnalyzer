@@ -18,7 +18,6 @@ class TestVisualizer(unittest.TestCase):
         
         self.time_series = [1.0, 2.0, 1.5, 10.0, 2.0, 1.8, 9.5]  
         self.anomalies = [False, False, False, True, False, False, True]
-    #If graphs dont need to be displayed during testing, we add flag show_plots to all test functions
 
     def test_plot_precipitation_trend(self):
         

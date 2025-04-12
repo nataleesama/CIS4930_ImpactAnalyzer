@@ -49,7 +49,6 @@ def predict():
     predictions = model.predict(tx)
 
     fig = Visualizer.plot_precipitation_trend_html(tx_unnorm, ty.tolist(), predictions.tolist())
-    #plot_html = to_html(fig, full_html=False, include_plotlyjs='cdn')
     plot_html = to_html(fig, full_html=False, include_plotlyjs=True)
 
     return render_template("predict.html", plot=plot_html)
@@ -57,11 +56,7 @@ def predict():
 
 @app.route('/cluster')
 def cluster():
-    data = list(zip(x, y))
-    labels = custom_clustering(np.array(data), n_clusters=2)
-    clustergraph = Visualizer.plot_clustered_data(data, labels.tolist())
-    print("Type of clustergraph:", type(clustergraph))
-    return render_template('cluster.html', clustergraph=clustergraph)
+    return render_template('cluster.html')
 
 @app.route('/anomalies')
 def anomalies():
@@ -85,10 +80,6 @@ def anomalies():
     plot_html = Visualizer.plot_anomalies_to_html(station_data)  # call your function
     return render_template('anomalies.html', plot_html = plot_html)
 
-
-@app.route('/algorithms')
-def algorithms():
-    return render_template("algorithms.html")
 
 if __name__ == '__main__':
     app.run(debug = True)
