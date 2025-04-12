@@ -66,19 +66,23 @@ class DataProcessor:
 
         precipitation = self.data['normalized'].astype(float).to_numpy()
         dates = self.data['datenormalized'].astype(float).to_numpy()
+
+        self.data['date'] = self.data['date'].to_numpy()
+        self.data['dateFloat'] = self.data['date'].apply(partitionDays)
         
         return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
+
     def get_precipitation(self):
         return self.data['value']
         #return dates, precipitation #data in datetime formate 2024-01-10, preciptation
 
-"""def normalize(dt):
+def normalize(dt):
     dt_series = pd.Series(dt)
     min_date = dt_series.min()
     max_date = dt_series.max()
 
     normalized = dt_series.map(lambda x: (x - min_date) / (max_date - min_date))
-"""       
+       
 def partitionDays(dt):
     start_of_year = dt.replace(month=1, day=1)
     end_of_year = dt.replace(month=12, day=31)
