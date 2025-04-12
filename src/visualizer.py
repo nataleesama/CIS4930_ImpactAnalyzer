@@ -138,47 +138,58 @@ class Visualizer:
     
     @staticmethod
     def plot_clustered_data(data: List[Tuple[float, float]], labels: List[int]) -> None:
-        plt.figure(figsize=(10, 6)) #presetting the size for legibility
+        # Convert the data to a NumPy array for easy slicing
+        data_array = np.array(data)
+        x = data_array[:, 0]  # Represents time, e.g. in years or ordinal values
+        y = data_array[:, 1]  # Represents precipitation or another climate metric
+
+        # Create the figure
+        plt.figure(figsize=(10, 6))
         
-        dataArray = np.array(data)
-        x = dataArray[:, 0]
-        y = dataArray[:, 1]
-
-        bounds = [2020,2025,0,100] #axis aka years, these would be the static markers for the xaxis
-        plt.scatter(x, y)
-
-        xTickYears = range(2020,2025)
-        xTickLabels = [f"08/{year}" for year in xTickYears]
-
-        plt.xticks(xTickYears,xTickLabels) #ticks need to be represented as integers, and aug 1 ~2020.58. fix later
-        #plt.axis(bounds) #so this sets the max for both x and y
+        # Plot the data using cluster labels to differentiate colors
+        scatter = plt.scatter(x, y, c=labels, cmap='viridis', s=50)
+        
+        #added a colorbar to indicate which color corresponds to which cluster
+        plt.colorbar(scatter, ticks=range(min(labels), max(labels)+1))
+        
+        # Set the x-axis ticks with custom labels
+        x_tick_years = list(range(2020, 2025))
+        x_tick_labels = [f"08/{year}" for year in x_tick_years]
+        plt.xticks(x_tick_years, x_tick_labels)
+        
+        # Add axis labels and a title
+        plt.xlabel("Time")
+        plt.ylabel("Precipitation")
+        plt.title("Clustered Climate Data")
+        
+        #set axes limits if needed; uncomment the next line to apply bounds
+        # plt.axis([2020, 2025, 0, 100])
+        
         plt.grid(True)
         plt.show()
 
-        # Equivalent Code that allows html interactive abilities
+        # --- Interactive HTML version ---
         """
+        import plotly.express as px
+        import plotly.io as pio
         x_value, y_value = zip(*data)
-
-        fig = plotly.express.scatter(
+        fig = px.scatter(
             x=x_value,
             y=y_value,
+            color=labels,
             title="Clustered Data",
-            labels={'x': 'Year', 'y': 'Precipitation'}
+            labels={'x': 'Time', 'y': 'Precipitation'}
         )
-
-        # Customize ticks
         fig.update_layout(
             xaxis=dict(
                 tickvals=list(range(2020, 2025)),
                 ticktext=[f"08/{year}" for year in range(2020, 2025)]
             ),
-            xaxis_title='Date',
+            xaxis_title='Time',
             yaxis_title='Precipitation',
             height=600
         )
-
-        # to display in html
-        return plotly.io.to_html(fig, full_html=False, include_plotlyjs='cdn')
+        return pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
         """
 
     @staticmethod

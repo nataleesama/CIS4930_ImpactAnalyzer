@@ -4,6 +4,8 @@ from data_processor import normalize
 from sklearn.base import BaseEstimator, RegressorMixin
 from typing import Tuple
 from sklearn.linear_model import HuberRegressor
+from sklearn.cluster import KMeans
+
 
 class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
     # Custom Linear Regression Model
@@ -75,7 +77,10 @@ class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
 
         anomalies = np.abs(residuals) > threshold
         return anomalies, y
-    
-    def custom_clustering(data: np.ndarray, n_clusters: int) -> np.ndarray:
-        pass
+    @staticmethod
+    def custom_clustering(data: np.ndarray, n_clusters: int = 2) -> np.ndarray:
+       
+        kmeans = KMeans(n_clusters=n_clusters, random_state =0)
+        kmeans.fit(data)
+        return kmeans.labels_
 

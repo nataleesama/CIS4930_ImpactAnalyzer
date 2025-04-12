@@ -42,7 +42,7 @@ def main():
     # Cluster Graph
     elif args.action == "cluster":
         data = list(zip(tx, ty))
-        labels = custom_clustering(np.array(data), n_clusters=2)
+        labels = CustomPrecipitationPredictor.custom_clustering(np.array(data), n_clusters=2)
         Visualizer.plot_clustered_data(data, labels.tolist())
 
     # Anomalies
