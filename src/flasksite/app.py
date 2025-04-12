@@ -1,5 +1,7 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, redirect
 import numpy as np
+import json
+from plotly.io import to_html
 
 # have to go one level up to access our modules
 import sys
@@ -7,15 +9,29 @@ import os
 sys.path.append(os.path.abspath('..'))
 from visualizer import Visualizer
 from data_processor import DataProcessor
-from algorithms import CustomPrecipitationPredictor, custom_clustering, detect_anomalies
+from algorithms import CustomPrecipitationPredictor
 
 app = Flask(__name__)
 
-# Load and preprocess data
-processor = DataProcessor("../../data/climate_data.json")
-processor.load_data()
-processor.clean_data()
-x, y = processor.get_features_and_target() # get dates and values
+
+miamiProcessor = DataProcessor("../../data/miamiData.json")
+orlandoProcessor = DataProcessor("../../data/orlandoData.json")
+tallahasseeProcessor = DataProcessor("../../data/tallahasseeData.json")
+    
+miamiProcessor.load_data()
+miamiProcessor.clean_data()
+mx, my = miamiProcessor.get_features_and_target() # get dates and values
+mz = miamiProcessor.get_precipitation()
+    
+orlandoProcessor.load_data()
+orlandoProcessor.clean_data()
+ox, oy = orlandoProcessor.get_features_and_target()
+oz = orlandoProcessor.get_precipitation()
+    
+tallahasseeProcessor.load_data()
+tx, ty = tallahasseeProcessor.get_features_and_target()
+tz = tallahasseeProcessor.get_precipitation()
+tx_unnorm = tallahasseeProcessor.unnormalized_date()
 
 @app.route('/')
 def home():
@@ -23,7 +39,19 @@ def home():
 
 @app.route('/predict')
 def predict():
-   return render_template('predict.html')
+    tallahasseeProcessor = DataProcessor("../../data/tallahasseeData.json")
+    tallahasseeProcessor.load_data()
+    tx, ty = tallahasseeProcessor.get_features_and_target()
+    tx_unnorm = tallahasseeProcessor.unnormalized_date()
+
+    model = CustomPrecipitationPredictor()
+    model.fit(tx, ty)
+    predictions = model.predict(tx)
+
+    fig = Visualizer.plot_precipitation_trend_html(tx_unnorm, ty.tolist(), predictions.tolist())
+    plot_html = to_html(fig, full_html=False, include_plotlyjs='cdn')
+    return render_template("predict.html", plot=plot_html)
+
 
 @app.route('/cluster')
 def cluster():
@@ -35,11 +63,30 @@ def cluster():
 
 @app.route('/anomalies')
 def anomalies():
-   return render_template('anomalies.html')
+    model = CustomPrecipitationPredictor()
 
-@app.route('/data')
-def data():
-   return render_template('data.html')
+    # Prepare station data dictionary
+    station_data = {
+        'Tallahassee': {
+            'values': tz,
+            'anomalies': model.detect_anomalies(tx, tz)[0]
+        },
+        'Miami': {
+            'values': mz,
+            'anomalies': model.detect_anomalies(mx, mz)[0]
+        },
+        'Orlando': {
+            'values': oz,
+            'anomalies': model.detect_anomalies(ox, oz)[0]
+        }
+    }
+    plot_html = Visualizer.plot_anomalies_to_html(station_data)  # call your function
+    return render_template('anomalies.html', plot_html = plot_html)
+
+
+@app.route('/algorithms')
+def algorithms():
+    return render_template("algorithms.html")
 
 if __name__ == '__main__':
-   app.run(debug = True)
+    app.run(debug = True)

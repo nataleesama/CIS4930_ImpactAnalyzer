@@ -4,6 +4,9 @@
         <title>Prediction Graph</title>
     </head>
     <body>
+        <div>
+            {{ plot|safe }}
+        </div>
         <a href="{{ url_for('home') }}">Back to Home</a>
     </body>
 </html>

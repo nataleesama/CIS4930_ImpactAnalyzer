@@ -1,5 +1,5 @@
 body{
-    background-color: #09123d;
+    background-color: #080e29;
     color: gray;
 }
 
@@ -10,11 +10,7 @@ h1{
 a{
     text-decoration: none;
     font-size: 25px;
-    color: #09123d;
-}
-
-a:hover{
-    color: #09127a;
+    color: #080e29;
 }
 
 .home_container{
@@ -31,10 +27,14 @@ a:hover{
 
 .choice{
     background-color: gray;
-    width: 250px;
+    width: 300px;
     height: 150px;
-    margin: 100px;
+    margin: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.choice:hover{
+    background-color: darkgrey;
 }
