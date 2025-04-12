@@ -7,7 +7,7 @@ from sklearn.linear_model import HuberRegressor
 
 class CustomPrecipitationPredictor(BaseEstimator, RegressorMixin):
     # Custom Linear Regression Model
-    def __init__(self, learning_rate: float = 0.001, n_iterations: int= 1000):
+    def __init__(self, learning_rate: float = 0.001, n_iterations: int= 10000):
         self.learning_rate = learning_rate
         self.n_iterations = n_iterations
         self.weight = 0

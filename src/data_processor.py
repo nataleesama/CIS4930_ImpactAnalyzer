@@ -70,7 +70,8 @@ class DataProcessor:
         self.data['date'] = self.data['date'].to_numpy()
         self.data['dateFloat'] = self.data['date'].apply(partitionDays)
         
-        return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
+        #return self.data['dateFloat'], precipitation #data in datetime formate 2024-01-10, preciptation
+        return dates, precipitation
 
     def get_precipitation(self):
         return self.data['value']
