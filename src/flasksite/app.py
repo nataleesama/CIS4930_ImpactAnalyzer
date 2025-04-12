@@ -49,7 +49,9 @@ def predict():
     predictions = model.predict(tx)
 
     fig = Visualizer.plot_precipitation_trend_html(tx_unnorm, ty.tolist(), predictions.tolist())
-    plot_html = to_html(fig, full_html=False, include_plotlyjs='cdn')
+    #plot_html = to_html(fig, full_html=False, include_plotlyjs='cdn')
+    plot_html = to_html(fig, full_html=False, include_plotlyjs=True)
+
     return render_template("predict.html", plot=plot_html)
 
 
