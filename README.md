@@ -22,7 +22,7 @@ python3 test_'x', x = {'algorithms.py', 'data_processor.py', 'visualizer.py'}, i
 # Project structure
 - 'src/': Source code
 - 'tests/': Unit tests
-- 'data/': Climate data (CSV/JSON format)
+- 'data/': Climate data (JSON format)
 - 'requirements.txt': Project dependencies
 - 'README.md': Project documentation
 
