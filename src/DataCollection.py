@@ -53,4 +53,6 @@ if __name__ == "__main__":
     #CombineData(365, stationId="USW00012839",output="../data/miamiData.json") #miami
     #CombineData(365, stationId="USW00012815",output="../data/orlandoData.json") #jupiter
     CombineData(5, stationId="USW00093805",output="../data/test_data.json")
+    CombineData(365, stationId="USW00014922", output="../data/minneapolisData.json")  # Minneapolis-St Paul Airport
+    CombineData(365, stationId="USW00023183", output="../data/phoenixData.json")  # Phoenix Sky Harbor Airport
     pass

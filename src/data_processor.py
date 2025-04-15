@@ -99,4 +99,3 @@ if __name__ == "__main__":
     #print(orlandoProcessor.get_features_and_target())
     print(tallahasseeProcessor.get_features_and_target())
    
-
